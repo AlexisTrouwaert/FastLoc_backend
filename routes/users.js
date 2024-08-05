@@ -43,7 +43,7 @@ router.post('/signup', (req, res) => {
 
 
 router.post('/signin', (req, res) => {
-    if (!checkBody(req.body, ['username' && 'email', 'password'])) {
+    if (!checkBody(req.body, ['username' || 'email', 'password'])) {
         res.json({ result: false, error: 'Certains champs sont incorrect ' });
         return;
     }
