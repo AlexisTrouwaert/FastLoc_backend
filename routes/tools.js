@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Tools = require('../models/tools')
 
-router.get('/search', (req, res) => {
-    
-})
 
 module.exports = router;

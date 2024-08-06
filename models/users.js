@@ -13,7 +13,7 @@ const articlesSchema = mongoose.Schema({
 
 const addressSchema = mongoose.Schema({
     adresse: String,
-    city: String, 
+    city: String,
     latitude: Number,
     longitude: Number,
 });

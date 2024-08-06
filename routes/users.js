@@ -10,7 +10,7 @@ const geolib = require('geolib');
 
 
 
-
+//Inscription
 router.post('/signup', (req, res) => {
     const hash = bcrypt.hashSync(req.body.password, 10);
     const token = uid2(32)
@@ -41,7 +41,7 @@ router.post('/signup', (req, res) => {
 });
 
 
-
+//Connexion classique
 router.post('/signin', (req, res) => {
     if (!checkBody(req.body, ['username'||'email'&&'password'])) {
         res.json({ result: false, error: 'Certains champs sont incorrect ' });
@@ -59,6 +59,7 @@ router.post('/signin', (req, res) => {
 }
 )
 
+//Connexion persistante
 router.get('/connexion/:username/:token', (req, res) => {
     Users.findOne({ username: req.params.username, token: req.params.token, isConnected: req.params.isConnected, email: req.params.email })
         .then(data => {
@@ -99,7 +100,66 @@ router.get('/map', (req, res) => {
             res.status(2).json({ error: 'Erreur  users' });
 })
 
-
+//Recherche des article des utilisateur par la categorie, la marque ou le model
+router.get('/search/:searched/:croissant?/:decroissant?/:date?', (req, res) => {
+    Users.find()
+    .populate('article.outil')
+    .then(data => {
+        let articleuser = []
+        let filtred = []
+        for (let i = 0; i < data.length; i++){
+            if(data[i].article.length){
+                articleuser.push(data[i].article)
+            }
+        }
+        articleuser.map((data, i) => {
+            if(data[0].isAvailable){
+                if(data[0].outil[0].categorie.toLowerCase() == req.params.searched.toLowerCase()){
+                    console.log('ok')
+                    filtred.push(data[0])
+                } else if (data[0].outil[0].brand.toLowerCase() == req.params.searched.toLowerCase()) {
+                    filtred.push(data[0])
+                } else if (data[0].outil[0].model.toLowerCase() == req.params.searched.toLowerCase()) {
+                    filtred.push(data[0])
+                }
+            }
+        })
+        if(filtred.length){
+            if(req.params.croissant){
+                filtred.sort(function compare(a, b) {
+                    if (a.price < b.price)
+                       return -1;
+                    if (a.price > b.price )
+                       return 1;
+                    return 0;
+                  });
+                  res.json({result : true, data : filtred})
+            } else if (req.params.decroissant){
+                filtred.sort(function compare(a, b) {
+                    if (a.price > b.price)
+                       return -1;
+                    if (a.price < b.price )
+                       return 1;
+                    return 0;
+                  });
+                  res.json({result : true, data : filtred})
+            } else if (req.params.note) {
+                filtred.sort(function compare(a, b) {
+                    if (a.note < b.note)
+                       return -1;
+                    if (a.note > b.note )
+                       return 1;
+                    return 0;
+                  });
+                  res.json({result : true, data : filtred})
+            } else {
+                res.json({result : true, data : filtred})
+            }
+        } else {
+            res.json({result : false, error : 'No articles found'})
+        }
+    })
+})
 
 
 
