@@ -61,7 +61,7 @@ router.post('/signin', (req, res) => {
 
 //Connexion persistante
 router.get('/connexion/:username/:token', (req, res) => {
-    Users.findOne({ username: req.params.username, token: req.params.token, isConnected: req.params.isConnected, email: req.params.email })
+    Users.findOne({ username: req.params.username, token: req.params.token})
         .then(data => {
             console.log(data);
             if (data) {
