@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 
 const articlesSchema = mongoose.Schema({
+    urlPhoto : String,
     etat: String, 
     price: Number, 
     locaduree: Date, 
