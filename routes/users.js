@@ -43,7 +43,7 @@ router.post('/signup', (req, res) => {
 
 
 router.post('/signin', (req, res) => {
-    if (!checkBody(req.body, ['username' || 'email', 'password'])) {
+    if (!checkBody(req.body, ['username'||'email'&&'password'])) {
         res.json({ result: false, error: 'Certains champs sont incorrect ' });
         return;
     }
@@ -60,7 +60,7 @@ router.post('/signin', (req, res) => {
 )
 
 router.get('/connexion/:username/:token', (req, res) => {
-    Users.findOne({ username: req.params.username, token: req.params.token, isConnected: req.params.isConnected })
+    Users.findOne({ username: req.params.username, token: req.params.token, isConnected: req.params.isConnected, email: req.params.email })
         .then(data => {
             console.log(data);
             if (data) {
