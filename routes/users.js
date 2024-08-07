@@ -7,6 +7,7 @@ const fetch = require('node-fetch')
 const { checkBody } = require('../modules/checkBody');
 const KEY = process.env.OWM_API_KEY
 const geolib = require('geolib');
+const moment = require ('moment')
 
 
 
@@ -14,6 +15,8 @@ const geolib = require('geolib');
 router.post('/signup', (req, res) => {
     const hash = bcrypt.hashSync(req.body.password, 10);
     const token = uid2(32)
+    let date = moment(new Date)
+    date = date.format("DD/MM/YYYY")
     Users.findOne({ username: req.body.username }).then(data => {
         if (!checkBody(req.body, ['username', 'password', 'email'])) {
             res.json({ result: false, error: 'champs incorrect/manquants' });
@@ -21,16 +24,16 @@ router.post('/signup', (req, res) => {
             console.log(data);
 
         } else if (data === null) {
-
             const newUser = new Users({
                 username: req.body.username,
                 email: req.body.email,
                 password: hash,
                 token: token,
+                date: date,
             })
             newUser.save().then(() => {
                 res.json({ result: true, newuserInfos: newUser });
-
+                console.log(newUser)
             })
         } else {
             res.json({ result: false, error: "Utilisateur already" });
@@ -71,10 +74,6 @@ router.get('/connexion/:username/:token', (req, res) => {
             }
         });
 });
-
-
-
-
 
 router.get('/map', (req, res) => {
     fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${KEY}`)
@@ -160,6 +159,28 @@ router.get('/search/:searched/:croissant?/:decroissant?/', (req, res) => {
         }
     })
 })
+
+router.post('/addArtciles', (req, res) => {
+    Users.find({username : req.body.username, token : req.body.token})
+    .then(response => response.json())
+    .then(data => {
+        if(!data.adress){
+            res.json({result : false, error : 'Ajoutez une adresse avant de mettre des article en vente', adress : false})
+        } else {
+            console.log(data)
+        }
+    })
+})
+
+//Recuperer info user pour page profil
+router.get('/profil/:username/:token', (req, res) => {
+    Users.findOne({username : req.params.username, token : req.params.token})
+    .then(data => {
+        let date = moment(data.date).format('DD/MM/YYYY')
+        res.json({result : true, data : data, date : date})
+    })
+})
+
 
 
 module.exports = router;

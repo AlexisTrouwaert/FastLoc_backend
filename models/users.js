@@ -15,6 +15,7 @@ const articlesSchema = mongoose.Schema({
 const addressSchema = mongoose.Schema({
     adresse: String,
     city: String,
+    postal : Number,
     latitude: Number,
     longitude: Number,
 });
