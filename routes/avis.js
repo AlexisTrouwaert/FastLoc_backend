@@ -13,6 +13,13 @@ router.post('/newAvis', (req, res) => {
                 Avis : req.body.avis,
                 data : new Date(),
             })
+
+            newAvis.save()
+            .then(() => {
+                res.json({result : true, newAvisInfos : newAvis})
+            })
+        } else {
+            res.json({result : false, error : 'Vous avez déja laisser un avis a cet utilisateur'})
         }
     })
 })

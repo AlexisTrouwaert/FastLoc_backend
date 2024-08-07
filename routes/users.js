@@ -162,5 +162,4 @@ router.get('/search/:searched/:croissant?/:decroissant?/:date?', (req, res) => {
 })
 
 
-
 module.exports = router;
