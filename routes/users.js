@@ -18,18 +18,23 @@ router.post('/signup', (req, res) => {
     let date = moment(new Date)
     date = date.format("DD/MM/YYYY")
     Users.findOne({ username: req.body.username }).then(data => {
-        if (!checkBody(req.body, ['username', 'password', 'email'])) {
+        if (!checkBody(req.body, ['username', 'password', 'email', 'nom', 'prenom', 'adresse', 'ville'])) {
             res.json({ result: false, error: 'champs incorrect/manquants' });
             return
-            console.log(data);
 
         } else if (data === null) {
             const newUser = new Users({
+                name : req.body.nom,
                 username: req.body.username,
+                firstName : req.body.prenom,
                 email: req.body.email,
                 password: hash,
                 token: token,
                 date: date,
+                addresse : {
+                    adresse : req.body.adresse,
+                    city : req.body.ville
+                }
             })
             newUser.save().then(() => {
                 res.json({ result: true, newuserInfos: newUser });
