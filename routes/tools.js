@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Tools = require('../models/tools')
 
+
+router.get('/getTools', (req, res) => {
+    Tools.find()
+    .then(data => {
+        res.json({result : true, data : data})
+    })
+})
+
 router.post('/addTool', (req, res) => {
     Tools.findOne({brand : req.body.brand, model : req.body.model, categorie : req.body.categorie})
     .then(data => {
