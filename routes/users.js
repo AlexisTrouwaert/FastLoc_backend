@@ -101,7 +101,7 @@ router.get('/map', (req, res) => {
 })
 
 //Recherche des article des utilisateur par la categorie, la marque ou le model
-router.get('/search/:searched/:croissant?/:decroissant?/:date?', (req, res) => {
+router.get('/search/:searched/:croissant?/:decroissant?/', (req, res) => {
     Users.find()
     .populate('article.outil')
     .then(data => {
