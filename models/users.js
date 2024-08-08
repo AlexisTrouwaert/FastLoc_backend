@@ -29,8 +29,6 @@ const usersSchema = mongoose.Schema({
     token: String,
     note: Number,
     date: Date,
-    latitude: Number,
-    longitude: Number,
     isConnected: Boolean,
     addresse: addressSchema,
     article: [articlesSchema],

@@ -18,7 +18,7 @@ router.post('/signup', (req, res) => {
     let date = moment(new Date)
     date = date.format("DD/MM/YYYY")
     Users.findOne({ username: req.body.username }).then(data => {
-        if (!checkBody(req.body, ['username', 'password', 'email', 'nom', 'prenom', 'adresse', 'ville'])) {
+        if (!checkBody(req.body, ['username', 'password', 'email', 'nom', 'prenom', 'adresse', 'ville', 'latitude', 'longitude'])) {
             res.json({ result: false, error: 'champs incorrect/manquants' });
             return
 
@@ -33,7 +33,9 @@ router.post('/signup', (req, res) => {
                 date: date,
                 addresse : {
                     adresse : req.body.adresse,
-                    city : req.body.ville
+                    city : req.body.ville,
+                    latitude : req.body.latitude,
+                    longitude : req.body.longitude,
                 }
             })
             newUser.save().then(() => {
