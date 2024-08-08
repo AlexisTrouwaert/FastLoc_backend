@@ -29,6 +29,7 @@ const usersSchema = mongoose.Schema({
     token: String,
     note: Number,
     date: Date,
+    url: String,
     isConnected: Boolean,
     addresse: addressSchema,
     article: [articlesSchema],

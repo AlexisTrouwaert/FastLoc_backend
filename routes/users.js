@@ -8,6 +8,8 @@ const { checkBody } = require('../modules/checkBody');
 const KEY = process.env.OWM_API_KEY
 const geolib = require('geolib');
 const moment = require ('moment')
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
 
 
 
@@ -16,6 +18,7 @@ router.post('/signup', (req, res) => {
     const hash = bcrypt.hashSync(req.body.password, 10);
     const token = uid2(32)
     let date = moment(new Date)
+    let url = 'default.png'
     date = date.format("DD/MM/YYYY")
     Users.findOne({ username: req.body.username }).then(data => {
         if (!checkBody(req.body, ['username', 'password', 'email', 'nom', 'prenom', 'adresse', 'ville', 'latitude', 'longitude'])) {
@@ -31,6 +34,7 @@ router.post('/signup', (req, res) => {
                 password: hash,
                 token: token,
                 date: date,
+                url : url,
                 addresse : {
                     adresse : req.body.adresse,
                     city : req.body.ville,
@@ -107,66 +111,33 @@ router.get('/map', (req, res) => {
 })
 
 //Recherche des article des utilisateur par la categorie, la marque ou le model
-router.get('/search/:searched/:croissant?/:decroissant?/', (req, res) => {
+router.get('/search/:searched/', (req, res) => {
     Users.find()
     .populate('article.outil')
     .then(data => {
-        let articleuser = []
-        let filtred = []
+        articlesFound = []
         for (let i = 0; i < data.length; i++){
             if(data[i].article.length){
-                articleuser.push(data[i].article)
+                for (let j of data[i].article)
+                    if(j.isAvailable){
+                        if(j.outil[0].categorie.toLowerCase() == req.params.searched.toLowerCase()){
+                            articlesFound.push(j)
+                        } else if (j.outil[0].brand.toLowerCase() == req.params.searched.toLowerCase()) {
+                            articlesFound.push(j)
+                        } else if (j.outil[0].model.toLowerCase() == req.params.searched.toLowerCase()) {
+                            articlesFound.push(j)
+                        }
+                    }
             }
         }
-        articleuser.map((data, i) => {
-            if(data[0].isAvailable){
-                if(data[0].outil[0].categorie.toLowerCase() == req.params.searched.toLowerCase()){
-                    console.log('ok')
-                    filtred.push(data[0])
-                } else if (data[0].outil[0].brand.toLowerCase() == req.params.searched.toLowerCase()) {
-                    filtred.push(data[0])
-                } else if (data[0].outil[0].model.toLowerCase() == req.params.searched.toLowerCase()) {
-                    filtred.push(data[0])
-                }
-            }
-        })
-        if(filtred.length){
-            if(req.params.croissant){
-                filtred.sort(function compare(a, b) {
-                    if (a.price < b.price)
-                       return -1;
-                    if (a.price > b.price )
-                       return 1;
-                    return 0;
-                  });
-                  res.json({result : true, data : filtred})
-            } else if (req.params.decroissant){
-                filtred.sort(function compare(a, b) {
-                    if (a.price > b.price)
-                       return -1;
-                    if (a.price < b.price )
-                       return 1;
-                    return 0;
-                  });
-                  res.json({result : true, data : filtred})
-            } else if (req.params.note) {
-                filtred.sort(function compare(a, b) {
-                    if (a.note < b.note)
-                       return -1;
-                    if (a.note > b.note )
-                       return 1;
-                    return 0;
-                  });
-                  res.json({result : true, data : filtred})
-            } else {
-                res.json({result : true, data : filtred})
-            }
+        if(articlesFound.length){
+            res.json({result : true, data : articlesFound})
         } else {
-            res.json({result : false, error : 'No articles found'})
+            res.json({result : false, error : 'No article found'})
         }
     })
 })
-
+//Ajouter des articles à son profil
 router.post('/addArtciles', (req, res) => {
     Users.find({username : req.body.username, token : req.body.token})
     .then(response => response.json())
@@ -186,6 +157,28 @@ router.get('/profil/:username/:token', (req, res) => {
         let date = moment(data.date).format('DD/MM/YYYY')
         res.json({result : true, data : data, date : date})
     })
+})
+
+//Edit profil
+router.put('/profil/edit', (req, res) => {
+    console.log(req.body);
+    if(req.body.url !== null){
+        Users.findOneAndUpdate(
+            {username : req.body.username, token : req.body.token},
+            {name : req.body.nom, firstName : req.body.prenom, addresse : {adresse : req.body.adresse, city : req.body.city, latitude : req.body.latitude, longitude : req.body.longitude}, url : req.body.url}
+        )
+        .then(() => {
+            res.json({result : true, photo : req.body.url})
+        })
+    } else {
+        Users.findOneAndUpdate(
+            {username : req.body.username, token : req.body.token},
+            {name : req.body.nom, firstName : req.body.prenom, addresse : {adresse : req.body.adresse, city : req.body.city, latitude : req.body.latitude, longitude : req.body.longitude}}
+        )
+        .then(() => {
+            res.json({result : true})
+        })
+    }
 })
 
 
