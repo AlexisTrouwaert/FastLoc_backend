@@ -7,7 +7,7 @@ const articlesSchema = mongoose.Schema({
     urlPhoto : String,
     etat: String, 
     price: Number, 
-    locaduree: Date, 
+    locaduree: Date,
     isAvailable: Boolean,
     outil :[{ type: mongoose.Schema.Types.ObjectId, ref: 'tools' }], 
 });
@@ -29,8 +29,7 @@ const usersSchema = mongoose.Schema({
     token: String,
     note: Number,
     date: Date,
-    latitude: Number,
-    longitude: Number,
+    url: String,
     isConnected: Boolean,
     addresse: addressSchema,
     article: [articlesSchema],
