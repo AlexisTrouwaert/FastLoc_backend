@@ -111,7 +111,7 @@ router.get('/map', (req, res) => {
 })
 
 //Recherche des article des utilisateur
-router.get('/search/:searched/', (req, res) => {
+router.get('/search/:searched', (req, res) => {
     Users.find()
     .populate('article.outil')
     .then(data => {
@@ -120,12 +120,14 @@ router.get('/search/:searched/', (req, res) => {
             if(data[i].article.length){
                 for (let j of data[i].article)
                     if(j.isAvailable){
-                        if(j.outil[0].categorie.toLowerCase() == req.params.searched.toLowerCase()){
-                            articlesFound.push(j)
-                        } else if (j.outil[0].brand.toLowerCase() == req.params.searched.toLowerCase()) {
-                            articlesFound.push(j)
-                        } else if (j.outil[0].model.toLowerCase() == req.params.searched.toLowerCase()) {
-                            articlesFound.push(j)
+                        if(j.outil.length){
+                            if(j.outil[0].categorie.toLowerCase() == req.params.searched.toLowerCase()){
+                                articlesFound.push(j)
+                            } else if (j.outil[0].brand.toLowerCase() == req.params.searched.toLowerCase()) {
+                                articlesFound.push(j)
+                            } else if (j.outil[0].model.toLowerCase() == req.params.searched.toLowerCase()) {
+                                articlesFound.push(j)
+                            }
                         }
                     }
             }
