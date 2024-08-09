@@ -161,7 +161,9 @@ router.put('/addArtcile', (req, res) => {
 //Recuperer info user pour page profil
 router.get('/profil/:username/:token', (req, res) => {
     Users.findOne({username : req.params.username, token : req.params.token})
+    // .populate('article.outil')
     .then(data => {
+        console.log('datapopu', data)
         let date = moment(data.date).format('DD/MM/YYYY')
         res.json({result : true, data : data, date : date})
     })
