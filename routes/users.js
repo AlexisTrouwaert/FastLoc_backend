@@ -110,7 +110,7 @@ router.get('/map', (req, res) => {
             res.status(2).json({ error: 'Erreur  users' });
 })
 
-//Recherche des article des utilisateur par la categorie, la marque ou le model
+//Recherche des article des utilisateur
 router.get('/search/:searched/', (req, res) => {
     Users.find()
     .populate('article.outil')
@@ -137,6 +137,7 @@ router.get('/search/:searched/', (req, res) => {
         }
     })
 })
+
 //Ajouter des articles à son profil
 router.put('/addArtcile', (req, res) => {
     Users.updateOne(
