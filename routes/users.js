@@ -138,15 +138,20 @@ router.get('/search/:searched/', (req, res) => {
     })
 })
 //Ajouter des articles à son profil
-router.post('/addArtciles', (req, res) => {
-    Users.find({username : req.body.username, token : req.body.token})
-    .then(response => response.json())
-    .then(data => {
-        if(!data.adress){
-            res.json({result : false, error : 'Ajoutez une adresse avant de mettre des article en vente', adress : false})
-        } else {
-            console.log(data)
-        }
+router.put('/addArtcile', (req, res) => {
+    Users.updateOne(
+        {username : req.body.username, token : req.body.token},
+        {$push : 
+            {article : 
+                {urlPhoto : req.body.urlPhoto,
+                etat : req.body.etat,
+                price : req.body.price,
+                isAvailable : req.body.isAvailable,
+                outil : req.body.outil,
+        }}}
+    )
+    .then(() => {
+        res.json({result : true})
     })
 })
 

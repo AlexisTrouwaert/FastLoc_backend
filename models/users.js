@@ -7,7 +7,7 @@ const articlesSchema = mongoose.Schema({
     urlPhoto : String,
     etat: String, 
     price: Number, 
-    locaduree: Date, 
+    locaduree: Date,
     isAvailable: Boolean,
     outil :[{ type: mongoose.Schema.Types.ObjectId, ref: 'tools' }], 
 });
