@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Avis = require('../models/avis')
+const Users = require('../models/users')
 
 router.post('/newAvis', (req, res) => {
     Avis.find({sender : req.body.sender, receiver : req.body.receiver})
@@ -21,6 +22,21 @@ router.post('/newAvis', (req, res) => {
         } else {
             res.json({result : false, error : 'Vous avez déja laisser un avis a cet utilisateur'})
         }
+    })
+})
+
+router.get('/:username/:token', (req, res) => {
+    Users.find({username : req.params.username, token : req.params.token})
+    .then(data => {
+        Avis.find({userId : data[0]._id})
+        .populate('userIdAvis')
+        .then(find => {
+            if(find){
+                res.json({result : true, data : find})
+            } else {
+                res.json({result : false})
+            }
+        })
     })
 })
 

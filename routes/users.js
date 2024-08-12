@@ -44,7 +44,6 @@ router.post('/signup', (req, res) => {
             })
             newUser.save().then(() => {
                 res.json({ result: true, newuserInfos: newUser });
-                console.log(newUser)
             })
         } else {
             res.json({ result: false, error: "Utilisateur already" });
@@ -77,7 +76,6 @@ router.post('/signin', (req, res) => {
 router.get('/connexion/:username/:token', (req, res) => {
     Users.findOne({ username: req.params.username, token: req.params.token})
         .then(data => {
-            console.log(data);
             if (data) {
                 res.json({ result: true });
             } else {
@@ -85,30 +83,6 @@ router.get('/connexion/:username/:token', (req, res) => {
             }
         });
 });
-
-router.get('/map', (req, res) => {
-    fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${KEY}`)
-        .then(response => response.json())
-        Users.find()
-        .then(users => {
-            const results = users.map(user => ({
-                latitude: user.latitude,
-                longitude: user.longitude,
-                
-            }));
-            console.log(results);
-            const rayon = 10;
-            const rayonUser = results.filter(user => 
-             geolib.isPointWithinRadius(results, { latitude: user.latitude, longitude: user.longitude }, rayon)
-            );
-
-            res.json(rayonUser);
-        })
-        .catch(err => {
-            console.error('Erreur pas ', err);
-        });
-            res.status(2).json({ error: 'Erreur  users' });
-})
 
 //Recherche des article des utilisateur
 router.get('/search/:searched', (req, res) => {
@@ -161,9 +135,8 @@ router.put('/addArtcile', (req, res) => {
 //Recuperer info user pour page profil
 router.get('/profil/:username/:token', (req, res) => {
     Users.findOne({username : req.params.username, token : req.params.token})
-    // .populate('article.outil')
+    .populate('article.outil')
     .then(data => {
-        console.log('datapopu', data)
         let date = moment(data.date).format('DD/MM/YYYY')
         res.json({result : true, data : data, date : date})
     })
@@ -171,7 +144,6 @@ router.get('/profil/:username/:token', (req, res) => {
 
 //Edit profil
 router.put('/profil/edit', (req, res) => {
-    console.log(req.body);
     if(req.body.url !== null){
         Users.findOneAndUpdate(
             {username : req.body.username, token : req.body.token},
@@ -189,6 +161,16 @@ router.put('/profil/edit', (req, res) => {
             res.json({result : true})
         })
     }
+})
+
+router.delete('/deleteArt/:id/:username/:token', (req, res) => {
+    let idTool = req.params.id
+    Users.updateOne({username : req.params.username, token : req.params.token},
+                    {$pull : {article : {_id : idTool}}}
+    )
+    .then(() => {
+        res.json({result : true})
+    })
 })
 
 
