@@ -19,7 +19,7 @@ router.post('/signup', (req, res) => {
     const token = uid2(32)
     let date = moment(new Date)
     let url = 'default.png'
-    date = date.format("DD/MM/YYYY")
+    // date = date.format("DD/MM/YYYY")
     Users.findOne({ username: req.body.username }).then(data => {
         if (!checkBody(req.body, ['username', 'password', 'email', 'nom', 'prenom', 'adresse', 'ville', 'latitude', 'longitude'])) {
             res.json({ result: false, error: 'champs incorrect/manquants' });
