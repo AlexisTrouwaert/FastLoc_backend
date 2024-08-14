@@ -89,7 +89,9 @@ router.get('/search/:searched', (req, res) => {
     Users.find()
     .populate('article.outil')
     .then(data => {
-        articlesFound = []
+        console.log('data', data)
+        let users = []
+        let articlesFound = []
         for (let i = 0; i < data.length; i++){
             if(data[i].article.length){
                 for (let j of data[i].article)
@@ -107,7 +109,7 @@ router.get('/search/:searched', (req, res) => {
             }
         }
         if(articlesFound.length){
-            res.json({result : true, data : articlesFound})
+            res.json({result : true, data : articlesFound, user : users})
         } else {
             res.json({result : false, error : 'No article found'})
         }

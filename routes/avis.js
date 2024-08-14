@@ -4,7 +4,6 @@ const Avis = require('../models/avis')
 const Users = require('../models/users')
 
 router.post('/send', (req, res) => {
-    console.log(req.body)
     Users.find({username : req.body.username, token : req.body.token})
     .then(data => {
         console.log('userdata',data)
@@ -27,6 +26,7 @@ router.get('/:username/:token', (req, res) => {
         .populate('userIdAvis')
         .then(find => {
             if(find){
+                console.log('find', find)
                 res.json({result : true, data : find})
             } else {
                 res.json({result : false})

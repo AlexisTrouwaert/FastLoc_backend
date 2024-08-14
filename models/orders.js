@@ -6,7 +6,12 @@ const ordersSchema = mongoose.Schema({
    locUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
    Orders : [{
       louUser: {type: mongoose.Schema.Types.ObjectId, ref: 'users' },
-      article : [{type : mongoose.Schema.Types.ObjectId, ref: 'users'}],
+      article : {
+         Categorie : String,
+         Brand : String,
+         Model : String,
+         Price : Number
+      },
       Cart : Boolean,
       Pending : Boolean,
       Finish : Boolean
