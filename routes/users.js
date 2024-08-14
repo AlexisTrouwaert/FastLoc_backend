@@ -13,6 +13,49 @@ const fs = require('fs');
 
 
 
+router.get('/detailArticles/:id', (req, res) => {
+    Users.find({"article._id": req.params.id})
+    .populate({
+        path: 'article.outil', 
+        model: 'tools' 
+        
+    })
+          .then(data => {
+
+            const allArticles = data.flatMap(user => user.article);
+
+
+
+            res.json({data: allArticles, user: data[0] });
+          })
+          .catch(err => {   
+            res.status(500).json({ message: 'Erreur', error: err });
+        });
+      });
+
+
+
+
+router.get('/articles', (req, res) => {
+    Users.find({})
+        .populate({
+            path: 'article.outil', 
+            model: 'tools' 
+        })
+        .then(users => {
+            
+            const allArticles = users.flatMap(user => user.article);
+           
+            res.json(allArticles);
+        })
+        .catch(err => {
+            res.status(500).json({ message: 'Erreur', error: err });
+        });
+});
+
+
+
+
 //Inscription
 router.post('/signup', (req, res) => {
     const hash = bcrypt.hashSync(req.body.password, 10);
@@ -85,7 +128,7 @@ router.get('/connexion/:username/:token', (req, res) => {
 });
 
 //Recherche des article des utilisateur
-router.get('/search/:searched', (req, res) => {
+router.get('/search/?:searched', (req, res) => {
     Users.find()
     .populate('article.outil')
     .then(data => {
