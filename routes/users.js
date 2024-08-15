@@ -11,6 +11,25 @@ const moment = require ('moment')
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
+router.get('/cartDetail/:id', (req, res) => {
+    Users.find({"article._id": req.params.id})
+    .populate({
+        path: 'article.outil', 
+        model: 'tools' 
+        
+    })
+          .then(data => {
+
+            const allArticles = data.flatMap(user => user.article);
+
+
+
+            res.json({data: allArticles, user: data[0] });
+          })
+          .catch(err => {   
+            res.status(500).json({ message: 'Erreur', error: err });
+        });
+      });
 
 
 router.get('/detailArticles/:id', (req, res) => {
