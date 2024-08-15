@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 //const { tools } = require('../app');
 
 const messagesSchema = mongoose.Schema({
-   senderUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
-   reciverUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+   from: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+   to: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
    message: String, 
-   date: Date, 
+   date: Date,
 
 
 });

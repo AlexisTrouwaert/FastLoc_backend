@@ -1,26 +1,37 @@
 const express = require('express');
 const router = express.Router();
 const Avis = require('../models/avis')
+const Users = require('../models/users')
 
-router.post('/newAvis', (req, res) => {
-    Avis.find({sender : req.body.sender, receiver : req.body.receiver})
+router.post('/send', (req, res) => {
+    Users.find({username : req.body.username, token : req.body.token})
     .then(data => {
-        if(data === null){
-            const newAvis = new Avis({
-                userId : req.body.receiver,
-                userAvisId : req.body.sender,
-                Note : req.body.note,
-                Avis : req.body.avis,
-                data : new Date(),
-            })
+        console.log('userdata',data)
+        newAvis = new Avis({
+            userId : data[0]._id,
+            userIdAvis : '66b4c4254e17d51e95e7f7dc',
+            Note : req.body.rating,
+            Avis : req.body.message
+        })
+        newAvis.save()
+    }).then(data => {
+        res.json({result : true})
+    })
+})
 
-            newAvis.save()
-            .then(() => {
-                res.json({result : true, newAvisInfos : newAvis})
-            })
-        } else {
-            res.json({result : false, error : 'Vous avez déja laisser un avis a cet utilisateur'})
-        }
+router.get('/:username/:token', (req, res) => {
+    Users.find({username : req.params.username, token : req.params.token})
+    .then(data => {
+        Avis.find({userId : data[0]._id})
+        .populate('userIdAvis')
+        .then(find => {
+            if(find){
+                console.log('find', find)
+                res.json({result : true, data : find})
+            } else {
+                res.json({result : false})
+            }
+        })
     })
 })
 

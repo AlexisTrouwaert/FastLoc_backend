@@ -17,6 +17,8 @@ const messagesRouter = require('./routes/messages')
 const ordersRouter = require('./routes/orders')
 const toolsRouter = require('./routes/tools')
 const indexRouter = require('./routes/index')
+// const profilRouter = require('./routes/profil')
+
 app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
@@ -30,5 +32,6 @@ app.use('/avis', avisRouter);
 app.use('/messages', messagesRouter);
 app.use('/orders', ordersRouter);
 app.use('/tools', toolsRouter)
+// app.use('/profil', profilRouter)
 
 module.exports = app;
