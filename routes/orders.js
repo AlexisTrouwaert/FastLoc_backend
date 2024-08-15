@@ -11,7 +11,7 @@ router.get('/:username/:token', (req, res) => {
         if(data){
             Orders.find({locUserId : data[0]._id})
             .then(data2 => {
-                console.log(data2.Orders[0])
+                console.log(data2.Orders)
                 res.json({data : data2})
             })
         }

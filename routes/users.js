@@ -33,7 +33,16 @@ router.get('/detailArticles/:id', (req, res) => {
         });
       });
 
-
+router.get('/getArticleDataOrder/:id', (req, res) => {
+    Users.find({'article._id' : req.params.id})
+    .populate({
+        path : 'article.outil',
+        model: 'tools'
+    })
+    .then(data => {
+        res.json({data : data})
+    })
+})
 
 
 router.get('/articles', (req, res) => {
